@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UI accepts a direction (left) 1`] = `"<aside class=\\"ff-app-cue dn\\" style=\\"transform: translateX(0px); xleft: 0; width: 16px; height: 16px\\"></aside>"`;
+
+exports[`UI accepts a direction (right) 1`] = `"<aside class=\\"ff-app-cue dn\\" style=\\"transform: translateX(0px); xright: 0; width: 16px; height: 16px\\"></aside>"`;
+
+exports[`UI renders 1`] = `"<aside class=\\"ff-app-cue dn\\" style=\\"transform: translateX(0px); xleft: 0; width: 1px; height: 1px\\"></aside>"`;

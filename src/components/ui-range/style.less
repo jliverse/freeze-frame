@@ -1,0 +1,32 @@
+@import (reference) '../../css/includes';
+
+[data-name='ui-range'] {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  > * {
+    margin-right: 1em;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  a {
+    margin-left: 0.5em;
+    svg {
+      max-width: 1rem; // HACK: IE11.
+    }
+    display: inline-block;
+  }
+  input[type='range'] {
+    width: 100%;
+    padding: 0;
+    cursor: ew-resize;
+  }
+  span {
+    white-space: nowrap;
+  }
+}
+
+[data-name='ui-range'] {
+  .aaab(#fff);
+}

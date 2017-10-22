@@ -1,0 +1,42 @@
+@import (reference) '../../css/includes';
+
+@size: 300px;
+
+[data-name='ff-app-color-wheel'] {
+  background-image: url('data:image/jpg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAKAAD/7gAOQWRvYmUAZMAAAAAB/9sAhAAUEBAZEhknFxcnMiYfJjIuJiYmJi4+NTU1NTU+REFBQUFBQUREREREREREREREREREREREREREREREREREREREARUZGSAcICYYGCY2JiAmNkQ2Kys2REREQjVCRERERERERERERERERERERERERERERERERERERERERERERERERET/wAARCAAQABADASIAAhEBAxEB/8QAWQABAQAAAAAAAAAAAAAAAAAABQQBAQEAAAAAAAAAAAAAAAAAAAABEAACAwEAAAAAAAAAAAAAAAABAgARAwQRAAEDBQAAAAAAAAAAAAAAAAEAMQWBAgNDBP/aAAwDAQACEQMRAD8AhUhjUc48gq2YFxZFmsxwEqKllsDGyqdMtrAX/9k=');
+  mask-image: url('data:image/svg+xml;charset=utf-8;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZWxsaXBzZSBjeD0iMTUwIiBjeT0iMTUwIiByeD0iMTUwIiByeT0iMTUwIiBmaWxsLW9wYWNpdHk9Im51bGwiIHN0cm9rZS1vcGFjaXR5PSJudWxsIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlPSJudWxsIiBmaWxsPSIjMDAwMDAwIi8+Cjwvc3ZnPg==');
+  transform: rotateZ(360deg);
+  backface-visibility: hidden;
+  perspective: 1000;
+  will-change: transform;
+  animation: spin 2s infinite linear;
+  background-size: @size @size;
+  background-origin: -@size*0.1 -@size*0.1;
+  width: @size;
+  height: @size;
+  margin-top: -@size / 2;
+  &.scale {
+    animation: spin 1s 2 linear;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes scale {
+  from {
+    transform: scale(1.0) rotate(0deg);
+  }
+  50% {
+    transform: scale(0.25);
+  }
+  to {
+    transform: scale(1.0) rotate(360deg);
+  }
+}

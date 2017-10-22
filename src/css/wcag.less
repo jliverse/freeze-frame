@@ -1,0 +1,129 @@
+/* Variables.
+ ****************************************************************************/
+@epsilon: 0.0000001; // Prevent deep recursion within the HSL lightness range.
+@numberOfDecimalPlaces: 4; // Define the rounding precision for luminance.
+
+/* Mixins.
+ ****************************************************************************/
+.aa(@background: #fff) {
+  ._contrast(@background, 4.5);
+}
+.aab(@background: #fff) {
+  background-color: @background;
+  ._contrast(@background, 4.5);
+}
+.aa-large(@background) {
+  .wcag-large;
+  ._contrast(@background, 3);
+}
+.aa-larger(@background) {
+  .wcag-larger;
+  ._contrast(@background, 3);
+}
+.aaa(@background: #fff) {
+  ._contrast(@background, 7);
+}
+.aaab(@background: #fff) {
+  background-color: @background;
+  ._contrast(@background, 7);
+}
+.aaa-large(@background: #fff) {
+  .wcag-large;
+  ._contrast(@background, 4.5);
+}
+.aaa-larger(@background: #fff) {
+  .wcag-larger;
+  ._contrast(@background, 4.5);
+}
+.wcag-large {
+  font-size: 14pt;
+  font-weight: bold;
+}
+.wcag-larger {
+  font-size: 18pt;
+}
+
+/* Local Mixins.
+ ****************************************************************************/
+._contrast(@background: black, @ratio: 7) {
+  // -wcag-background-color: @background;
+  ._initWithTargetLuma(@background);
+  ._find(@background, @with-target-luma);
+  color: @with-color;
+}
+
+// 1. Initialize the recursion
+//////////////////////////////////////////////////////////////////////////////
+._initWithTargetLuma(@background) when (luma(@background) / 5% + 1% >= (105% / (luma(@background) + 5%))) and (@ratio > 0) {
+  // Look for a darker target luma.
+  @done: false;
+  @luma: unit(luma(@background)) / 100;
+  @with-target-luma: (@luma / @ratio) + (0.05 / @ratio) - 0.05;
+}
+._initWithTargetLuma(@background) when (luma(@background) / 5% + 1% < (105% / (luma(@background) + 5%))) and (@ratio > 0) {
+  // Look for a lighter target luma.
+  @done: false;
+  @luma: unit(luma(@background)) / 100;
+  @with-target-luma: @ratio * (@luma + 0.05) - 0.05;
+}
+
+// 2. Recurse
+//////////////////////////////////////////////////////////////////////////////
+._find(@color: black, @target: 0.5, @l: 0, @r: 1) when not(@done) and (luma(hsl(hue(@color), saturation(@color), percentage(@l + (@r - @l) / 2))) < percentage(@target)) {
+  // The next midpoint will be darker than our target, so search the right half.
+  ._findNextMidpoint(@color, @l, @r);
+  ._test(@with-next-color, @target, @with-next-m, @r);
+}
+._find(@color: black, @target: 0.5, @l: 0, @r: 1) when not(@done) and not(luma(hsl(hue(@color), saturation(@color), percentage(@l + (@r - @l) / 2))) < percentage(@target)) {
+  // The next midpoint will be lighter than our target, so search the left half.
+  ._findNextMidpoint(@color, @l, @r);
+  ._test(@with-next-color, @target, @l, @with-next-m);
+}
+// Advance the recursion.
+._findNextMidpoint(@color, @l: 0, @r: 1) {
+  @with-next-m: @l + (@r - @l) / 2;
+  @with-next-color: hsl(
+    hue(@color),
+    saturation(@color),
+    percentage(@with-next-m)
+  );
+}
+
+// 3. Test for completion.
+//////////////////////////////////////////////////////////////////////////////
+._test(@color: black, @target: 0.5, @l: 0, @r: 1) when (round(abs(unit(luma(@color) / 100) - @target), @numberOfDecimalPlaces) = 0) {
+  // Test that our luminance is close enough to our desired value or that our range is smaller than we want to test.
+  ._withContrast(@background, @color);
+  // -wcag-contrast-pass: round(@with-contrast, 3);
+  @with-color: @color;
+  @done: true;
+}
+
+._test(@color: black, @target: 0.5, @l: 0, @r: 1) when not(round(abs(unit(luma(@color) / 100) - @target), @numberOfDecimalPlaces) = 0) and (@r - @l <= @epsilon) {
+  // Test for the case where we haven't come close to our target number, but still can't find a match. Add a 1px shadow.
+  @stroke-color: contrast(@color);
+  @stroke-fade: 50%;
+  text-shadow: 0 0px 0.5px fade(@stroke-color, @stroke-fade),
+    0 0px 0.5px fade(@stroke-color, @stroke-fade),
+    0 0px 0.5px fade(@stroke-color, @stroke-fade),
+    0 0px 0.5px fade(@stroke-color, @stroke-fade);
+  ._withContrast(@background, @color);
+  -wcag-contrast-fail: round(@with-contrast, 3);
+  @with-color: @color;
+  @done: true;
+}
+
+._test(@color: black, @target: 0.5, @l: 0, @r: 1) when not((round(abs(unit(luma(@color) / 100) - @target), @numberOfDecimalPlaces) = 0) or (@r - @l <= @epsilon)) {
+  // We didn't match on any completion tests, so keep recursing using the ._find mixins.
+  ._find(@color, @target, @l, @r);
+}
+
+// Generate a contrast ratio score according to the WCAG definition at:
+// https://www.w3.org/TR/WCAG/#contrast-ratiodef
+//////////////////////////////////////////////////////////////////////////////
+._withContrast(@l1: #fff, @l2: #000, @ratio: 7) when (lightness(@l1) >= lightness(@l2)) {
+  @with-contrast: (unit(luma(@l1)) / 100 + 0.05) / (unit(luma(@l2)) / 100 + 0.05);
+}
+._withContrast(@l1: #fff, @l2: #000, @ratio: 7) when (lightness(@l1) < lightness(@l2)) {
+  ._withContrast(@l2, @l1);
+}

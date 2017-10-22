@@ -1,0 +1,158 @@
+@import '~spectre.css/spectre.less';
+@import '~spectre.css/spectre-icons.less';
+
+@primary-color: #c6576c;
+@dark-color: #575757;
+@gray-color: #777777;
+
+.gray-color {
+  color: @gray-color;
+}
+
+.sans-serif {
+  font-family: @body-font-family;
+}
+
+.monospace {
+  font-family: @mono-font-family;
+}
+
+.btn-like {
+  line-height: @line-height;
+  padding: 6px 0;
+}
+
+.modal {
+  &:target,
+  &.active {
+    .modal-overlay {
+      background: fade(@bg-color, 33%);
+    }
+  }
+  .modal-footer {
+    border-top: solid fade(@gray-color-light, 10%) 1px;
+  }
+  .modal-body {
+    background: linear-gradient(
+      from bottom,
+      fade(#000, 4%) 0%,
+      rgba(255, 255, 255, 0) 33%
+    );
+  }
+}
+
+.panel {
+  background-color: #fff;
+}
+
+.user-select-none {
+  user-select: none;
+  -webkit-touch-callout: none;
+  -ms-user-select: none;
+}
+
+.page-center {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  transform: perspective(1px) translateY(-50%);
+  img& {
+    left: 50%;
+    right: auto;
+    transform: perspective(1px) translateY(-50%) translateX(-50%);
+    max-width: none;
+  }
+}
+
+.db {
+  display: block;
+}
+.di {
+  display: inline;
+}
+.dib {
+  display: inline-block;
+}
+.dn {
+  display: none;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.va-t {
+  vertical-align: top;
+}
+
+.w-67 {
+  width: 67%;
+}
+.w-100 {
+  width: 100%;
+}
+
+@media screen and (min-width: 30em) {
+  .w-67-ns {
+    width: 67%;
+  }
+}
+
+@media screen and (min-width: 30em) and (max-width: 60em) {
+  .w-67-m {
+    width: 60%;
+  }
+}
+
+@media screen and (min-width: 60em) {
+  .w-67-l {
+    width: 67%;
+  }
+}
+
+.pointer:hover {
+  cursor: pointer;
+}
+
+.relative,
+.z--1,
+.z-0,
+.z-1,
+.z-2,
+.z-3,
+.z-4,
+.z-5,
+.z-max {
+  position: relative;
+}
+
+.z--1 {
+  z-index: -@zindex-0;
+}
+.z-0 {
+  z-index: 0;
+}
+.z-1 {
+  z-index: @zindex-0;
+}
+.z-2 {
+  z-index: @zindex-1;
+}
+.z-3 {
+  z-index: @zindex-2;
+}
+.z-4 {
+  z-index: @zindex-3;
+}
+
+abbr[title] {
+  border-bottom: none;
+}
+
+a:focus {
+  box-shadow: none;
+}

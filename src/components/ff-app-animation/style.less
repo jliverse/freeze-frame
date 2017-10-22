@@ -1,0 +1,34 @@
+@import (reference) '../../css/includes';
+
+[data-name="ff-app-animation"] {
+  .page-center;
+  display: flex;
+  justify-content: center;
+}
+
+&.shrink,
+&.spiral {
+  img {
+    animation: shrink 1s infinite linear;
+  }
+}
+&.spiral {
+  img {
+    animation: spiral 2s infinite linear;
+  }
+}
+
+@keyframes spiral {
+  33% {
+    transform: rotate(108deg) translateX(50%) translateY(-50%);
+  }
+  67% {
+    transform: rotate(240deg) translateX(-50%) translateY(50%);
+  }
+}
+
+@keyframes shrink {
+  50% {
+    transform: scale(0.25);
+  }
+}

@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches styles and markup 1`] = `"<div data-name=\\"ff-app-animation\\"><img class src=\\"0000.png\\" style /><canvas class=\\"dn\\" style></canvas></div>"`;
+
+exports[`matches styles and markup with size 1`] = `"<div data-name=\\"ff-app-animation\\" size=\\"256\\"><img class src=\\"0000.png\\" style /><canvas class=\\"dn\\" style></canvas></div>"`;

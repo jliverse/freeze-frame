@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" width="300" height="300">
+<linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="red"/>
+    <stop offset="100%" stop-color="green"/>
+</linearGradient>
+<linearGradient id="g2" x1="0.5" y1="0" x2="0.5" y2="1">
+    <stop stop-color="green"/>
+    <stop offset="100%" stop-color="yellow"/>
+</linearGradient>
+<linearGradient id="g3" x1="1" y1="0" x2="0" y2="1">
+    <stop stop-color="yellow"/>
+    <stop offset="100%" stop-color="blue"/>
+</linearGradient>
+<linearGradient id="g4" x1="1" y1="1" x2="0" y2="0">
+    <stop stop-color="blue"/>
+    <stop offset="100%" stop-color="cyan"/>
+</linearGradient>
+<linearGradient id="g5" x1="0.5" y1="1" x2="0.5" y2="0">
+    <stop stop-color="cyan"/>
+    <stop offset="100%" stop-color="magenta"/>
+</linearGradient>
+<linearGradient id="g6" x1="0" y1="1" x2="1" y2="0">
+    <stop stop-color="magenta"/>
+    <stop offset="100%" stop-color="red"/>
+</linearGradient>
+<path fill="none" stroke="url(#g1)" stroke-width="10" d="M150 10 a120 120 0 0 1 103.9230 60"/>
+<path fill="none" stroke="url(#g2)" stroke-width="10" d="M253.9230 70 a120 120 0 0 1 0 120"/>
+<path fill="none" stroke="url(#g3)" stroke-width="10" d="M253.9230 190 a120 120 0 0 1 -103.9230 60"/>
+<path fill="none" stroke="url(#g4)" stroke-width="10" d="M150 250 a120 120 0 0 1 -103.9230 -60"/>
+<path fill="none" stroke="url(#g5)" stroke-width="10" d="M46.077 190 a120 120 0 0 1 0 -120"/>
+<path fill="none" stroke="url(#g6)" stroke-width="10" d="M46.077 70 a120 120 0 0 1 103.9230 -60"/>
+</svg>

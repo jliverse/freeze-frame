@@ -1,0 +1,37 @@
+@import 'includes';
+@import 'ui';
+
+@error-color: #e3294d;
+@mono-font-family: 'SFMono-Regular',
+  "SF Mono",
+  "Segoe UI Mono",
+  "Roboto Mono",
+  Menlo,
+  Courier,
+  monospace;
+
+body {
+  margin: 0;
+  animation: fade-in 0.01s;
+}
+
+html:fullscreen {
+  background-color: @background-color;
+  top: 0;
+  left: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+html:not(.js) * {
+  display: none !important;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

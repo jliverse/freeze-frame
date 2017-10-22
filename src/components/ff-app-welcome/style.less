@@ -1,0 +1,26 @@
+@import (reference) '~css/includes.less';
+
+[data-name=ff-app-welcome] {
+  .empty {
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    .empty-icon {
+      svg {
+        height: 4rem;
+      }
+    }
+  }
+  @media screen and (min-height: 36em) {
+    .footer {
+      position: absolute;
+      transform: translateX(-50%);
+      bottom: 0;
+      left: 50%;
+      width: 100%;
+      opacity: 0.67;
+    }
+  }
+}

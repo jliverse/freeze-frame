@@ -1,0 +1,21 @@
+@import (reference) '~css';
+
+svg {
+  fill: currentColor;
+  vertical-align: baseline;
+  &.gray-color {
+    fill: #595959;
+    top: 0;
+  }
+  &.text {
+    height: @line-height * 0.67;
+  }
+}
+span,
+p {
+  > svg {
+    height: @line-height;
+    position: relative;
+    top: @unit-1 / 2;
+  }
+}

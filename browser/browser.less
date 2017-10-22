@@ -1,0 +1,20 @@
+@success: green;
+@failure: red;
+html {
+  height: 100vh;
+  &[data-tape-status]::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: ' ';
+    pointer-events: none;
+  }
+  &[data-tape-status='pass']::after {
+    border: solid fade(@success, 33%) 0.5em;
+  }
+  &[data-tape-status='fail']::after {
+    border: solid fade(@failure, 33%) 0.5em;
+  }
+}

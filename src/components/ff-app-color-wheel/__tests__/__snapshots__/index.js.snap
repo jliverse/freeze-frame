@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UI accepts a direction (left) 1`] = `"<div class=\\"page-center circle\\" direction=\\"left\\" data-name=\\"ff-app-color-wheel\\"></div>"`;
+
+exports[`UI accepts a direction (right) 1`] = `"<div class=\\"page-center circle\\" direction=\\"right\\" data-name=\\"ff-app-color-wheel\\"></div>"`;
+
+exports[`UI renders 1`] = `"<div class=\\"page-center circle\\" data-name=\\"ff-app-color-wheel\\"></div>"`;

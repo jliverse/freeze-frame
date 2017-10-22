@@ -1,0 +1,263 @@
+/*
+The MIT License (MIT)
+
+https://github.com/kazzkiq/balloon.css/
+Copyright (c) 2016 Claudio Holanda
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/* Variables
+ ****************************************************************************/
+@balloon-bg: fade(#000, 90%);
+@balloon-font-size: 12px;
+@balloon-arrow-size: 6px;
+@error-color: red;
+
+/* Mixins
+****************************************************************************/
+.mixin-svg-arrow(@width, @height, @degrees) {
+  @arrow-width: @width * 2;
+  @arrow-height: @height * 2;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="@{arrow-width}" height="@{arrow-height}"><path fill="@{color}" transform="rotate(@{degrees})" d="M2.658,0.000 C-13.615,0.000 50.938,0.000 34.662,0.000 C28.662,0.000 23.035,12.002 18.660,12.002 C14.285,12.002 8.594,0.000 2.658,0.000 Z"/></svg>')
+    no-repeat;
+  background-size: 100% auto;
+  height: @height;
+  width: @width;
+}
+
+.svg-arrow(@color, @position) {
+  & when (@position = up) {
+    @width: @balloon-arrow-size * 3;
+    @height: @balloon-arrow-size;
+    @degrees: 0;
+    .mixin-svg-arrow(@width, @height, @degrees);
+  }
+  & when (@position = down) {
+    @width: @balloon-arrow-size * 3;
+    @height: @balloon-arrow-size;
+    @degrees: 180 18 6;
+    .mixin-svg-arrow(@width, @height, @degrees);
+  }
+  & when (@position = left) {
+    @width: @balloon-arrow-size;
+    @height: @balloon-arrow-size * 3;
+    @degrees: -90 18 18;
+    .mixin-svg-arrow(@width, @height, @degrees);
+  }
+  & when (@position = right) {
+    @width: @balloon-arrow-size;
+    @height: @balloon-arrow-size * 3;
+    @degrees: 90 6 6;
+    .mixin-svg-arrow(@width, @height, @degrees);
+  }
+}
+
+.base-effects() {
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease-out 0.2s;
+}
+
+/* Styles
+****************************************************************************/
+.data-balloon(@bgcolor) {
+  position: relative;
+  outline: none;
+  &:before,
+  &:after {
+    .base-effects();
+    bottom: 100%;
+    left: 50%;
+    position: absolute;
+    z-index: 10;
+    transform: translate(-50%, 10px);
+    transform-origin: top;
+  }
+  &:after {
+    background: @bgcolor;
+    border-radius: @balloon-font-size / 3;
+    color: contrast(@bgcolor);
+    font-size: @balloon-font-size;
+    padding: 0.5em 1em;
+    white-space: nowrap;
+    margin-bottom: @balloon-arrow-size + 5;
+  }
+  &:before {
+    .svg-arrow(@bgcolor, up);
+    content: '';
+    margin-bottom: @balloon-arrow-size - 1;
+  }
+  &:hover {
+    &:before,
+    &:after {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, 0);
+    }
+  }
+}
+
+[data-balloon-error] {
+  background-color: fade(@error-color, 10%) !important;
+  .data-balloon(fade(@error-color, 90%));
+  &:after {
+    content: attr(data-balloon-error);
+    text-transform: none;
+  }
+}
+
+[data-balloon] {
+  .data-balloon(@balloon-bg);
+  &:after {
+    content: attr(data-balloon);
+  }
+
+  &[data-balloon-break] {
+    &:after {
+      white-space: normal;
+    }
+  }
+}
+
+:after {
+  [data-balloon-length]& {
+    white-space: normal;
+  }
+  [data-balloon-length='small']& {
+    width: 80px;
+  }
+  [data-balloon-length='medium']& {
+    width: 150px;
+  }
+  [data-balloon-length='large']& {
+    width: 260px;
+  }
+  [data-balloon-length='xlarge']& {
+    width: 90vw;
+    @media screen and (min-width: 768px) {
+      width: 380px;
+    }
+  }
+  [data-balloon-length='fit']& {
+    width: 100%;
+  }
+}
+
+[data-balloon-direction='left'] {
+  &:before,
+  &:after {
+    bottom: auto;
+    left: auto;
+    right: 100%;
+    top: 50%;
+    transform: translate(10px, -50%);
+  }
+  &:after {
+    margin-right: @balloon-arrow-size + 5;
+  }
+  &:before {
+    .svg-arrow(@balloon-bg, left);
+    margin-right: @balloon-arrow-size - 1;
+    margin-bottom: 0;
+  }
+  &:hover,
+  &[data-balloon-visible] {
+    &:before,
+    &:after {
+      transform: translate(0, -50%);
+    }
+  }
+}
+
+[data-balloon-direction='down-left'] {
+  &:before,
+  &:after {
+    bottom: auto;
+    left: auto;
+    right: 0;
+    top: 50%;
+    transform: translate(10px, -50%);
+  }
+  &:after {
+    margin-top: @balloon-arrow-size + 5;
+  }
+  &:before {
+    .svg-arrow(@balloon-bg, down);
+    margin-top: @balloon-arrow-size - 1;
+    margin-bottom: 0;
+    left: 10px;
+  }
+  &:hover,
+  &[data-balloon-visible] {
+    &:before,
+    &:after {
+      transform: translate(0, 11px);
+    }
+  }
+}
+[data-balloon-direction='down-right'] {
+  &:before,
+  &:after {
+    bottom: auto;
+    right: 0;
+    top: 100%;
+    transform: translate(0, -10px);
+  }
+  &:after {
+    margin-top: @balloon-arrow-size + 5;
+  }
+  &:before {
+    .svg-arrow(@balloon-bg, down);
+    margin-top: @balloon-arrow-size - 1;
+    margin-bottom: 0;
+    right: 5px;
+  }
+  &:hover,
+  &[data-balloon-visible] {
+    &:before,
+    &:after {
+      transform: translate(0, 0);
+    }
+  }
+}
+[data-balloon-direction='down'] {
+  &:before,
+  &:after {
+    bottom: auto;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -10px);
+  }
+  &:after {
+    margin-top: @balloon-arrow-size + 5;
+  }
+  &:before {
+    .svg-arrow(@balloon-bg, down);
+    margin-top: @balloon-arrow-size - 1;
+    margin-bottom: 0;
+  }
+  &:hover,
+  &[data-balloon-visible] {
+    &:before,
+    &:after {
+      transform: translate(-50%, 0);
+    }
+  }
+}

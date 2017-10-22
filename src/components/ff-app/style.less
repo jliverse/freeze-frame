@@ -1,0 +1,91 @@
+@import (reference) '../../css/includes';
+
+[data-name='ff-app'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: @background-color;
+}
+
+[data-name='ff-app-subject'] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  [type='submit'] {
+    background-color: @primary-color;
+    border: none;
+    .aaa(@primary-color);
+    font-size: 1.5rem;
+    border-radius: 3px;
+  }
+}
+
+[data-name='ui-range-container'] {
+  padding: 128px 0;
+  .w-100;
+  will-change: opacity;
+  html.ui & {
+    transition: all 500ms ease;
+  }
+
+  &:not(:hover) {
+    opacity: 0;
+    transform: translateY(calc(-128px - 64px));
+    pointer-events: all;
+  }
+
+  &,
+  &.active {
+    opacity: 1;
+    transform: translateY(-128px);
+  }
+}
+
+[data-name='ff-experiment-start'] {
+  .page-center;
+  button[data-id='download'] {
+    .mx-auto;
+    .db;
+    margin-top: 4em;
+    color: #fff;
+    background: transparent;
+    border-color: #fff;
+    transition: all 0.5s ease;
+    &:hover,
+    &:focus,
+    &:active {
+      box-shadow: 0 2px 6px fade(#000, 33%);
+      transform: scale(1.05);
+      background-color: #fff;
+      color: @background-color;
+    }
+  }
+  button[data-id='icon'] {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background: transparent;
+    border: none;
+    svg {
+      fill: transparent;
+      fill: fade(#fff, 67%);
+      transition: fill 0.5s ease;
+    }
+    html.ui & {
+      transition: transform 500ms ease;
+    }
+    &:hover,
+    &:focus {
+      outline: none;
+      transform: translateX(-50%) translateY(-50%) scale(1.05);
+      svg {
+        fill: #fff;
+        filter: drop-shadow(0 2px 4px fade(#000, 33%));
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+@import (reference) '../../css/includes';
+
+[role='alert'] {
+  display: none;
+  animation: toast 2s 2 alternate;
+  &.toast {
+    display: block;
+  }
+}
+
+@keyframes toast {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
