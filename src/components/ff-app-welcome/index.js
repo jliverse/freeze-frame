@@ -127,10 +127,7 @@ export default class extends Component {
           </div>
           <div class="empty-action">
             <div class="btn-group btn-group-inline">
-              <a
-                href={`freeze-frame-documentation.pdf#${version}`}
-                class="btn btn-link"
-              >
+              <a href={`${homepage}/wiki#${version}`} class="btn btn-link">
                 Read Documentation
               </a>
 

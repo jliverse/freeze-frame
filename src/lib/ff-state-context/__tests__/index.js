@@ -7,9 +7,229 @@ import Context from '..';
  * return a delegate that listens for those functions along with the
  * function name called.
  */
-function wrapDelegateFunctions(fn, names) {
-  return _.fromPairs(names.map(name => [name, _.partial(fn, name)]));
+function wrapDelegateFunctions(fn, names, properties) {
+  const delegate = _.fromPairs(names.map(name => [name, _.partial(fn, name)]));
+  delegate.calls = () =>
+    fn.mock.calls.map(([i, j]) => {
+      return properties ? [i, _.pick(j, properties)] : [i, j];
+    });
+
+  return delegate;
 }
+
+describe('24 Oct 2017', () => {
+  test('Boundary 999s after key down', () => {
+    jest.useFakeTimers();
+    const fn = jest.fn();
+    const context = new Context();
+    context.delegate = wrapDelegateFunctions(
+      fn,
+      ['didSaccade', 'didNotSaccade', 'didCalibrationEnd'],
+      ['isSaccadeAway', 'isSaccadeEarly', 'lookNumber', 'didMaintainFocus']
+    );
+    context.getDelayInMilliseconds = () => 1000;
+    context.start();
+
+    context.keyDown();
+    jest.runTimersToTime(1000 - 1);
+    context.keyUp();
+    jest.runTimersToTime(10000);
+
+    expect(context.delegate.calls()).toEqual([
+      [
+        'didSaccade',
+        {
+          isSaccadeAway: true,
+          isSaccadeEarly: true,
+          lookNumber: 0,
+          didMaintainFocus: false
+        }
+      ]
+    ]);
+  });
+  test('Boundary 1001s after key down', () => {
+    jest.useFakeTimers();
+    const fn = jest.fn();
+    const context = new Context();
+    context.delegate = wrapDelegateFunctions(
+      fn,
+      ['didSaccade', 'didNotSaccade', 'didCalibrationEnd'],
+      ['isSaccadeAway', 'isSaccadeEarly', 'lookNumber', 'didMaintainFocus']
+    );
+    context.getDelayInMilliseconds = () => 1000;
+    context.start();
+
+    context.keyDown();
+    jest.runTimersToTime(1000 + 1);
+    context.keyUp();
+    jest.runTimersToTime(10000);
+
+    expect(context.delegate.calls()).toEqual([
+      [
+        'didSaccade',
+        {
+          isSaccadeAway: false,
+          isSaccadeEarly: false,
+          lookNumber: 1,
+          didMaintainFocus: false
+        }
+      ]
+    ]);
+  });
+  test('Boundary tests after key down', () => {
+    jest.useFakeTimers();
+
+    const calls = [];
+
+    [
+      0,
+      0 + 1,
+      1000 - 1,
+      1000 + 1,
+      1000 + 200 - 1,
+      1000 + 200 + 1,
+      1000 + 200 + 600 - 1,
+      1000 + 200 + 600 + 1,
+      1000 + 200 + 600 + 400 - 1,
+      1000 + 200 + 600 + 400 + 1,
+      1000 + 200 + 600 + 2400 - 1,
+      1000 + 200 + 600 + 2400 + 1
+    ].forEach(time => {
+      const fn = jest.fn();
+      const context = new Context();
+      context.delegate = wrapDelegateFunctions(
+        fn,
+        ['didSaccade', 'didNotSaccade', 'didCalibrationEnd'],
+        [
+          'trialNumber',
+          'isSaccadeAway',
+          'isSaccadeEarly',
+          'lookNumber',
+          'didMaintainFocus'
+        ]
+      );
+      context.getDelayInMilliseconds = () => 1000;
+      context.start();
+
+      context.keyDown();
+      jest.runTimersToTime(time);
+      context.keyUp();
+      jest.runTimersToTime(10000);
+
+      const event = {};
+      event[time] = context.delegate
+        .calls()
+        .map(i => [
+          i[0],
+          [
+            i[1]['trialNumber'],
+            i[1]['isSaccadeEarly'] ? 'Early' : 'Not Early',
+            i[1]['didMaintainFocus']
+              ? 'No Saccade'
+              : i[1]['isSaccadeAway'] ? 'Saccade Away' : 'Saccade to Cue',
+            i[1]['lookNumber'] || 0
+          ]
+        ]);
+      calls.push(event);
+    });
+
+    expect(calls).toEqual([
+      { '0': [['didSaccade', [1, 'Early', 'Saccade Away', 0]]] },
+      { '1': [['didSaccade', [1, 'Early', 'Saccade Away', 0]]] },
+      { '999': [['didSaccade', [1, 'Early', 'Saccade Away', 0]]] },
+      { '1001': [['didSaccade', [1, 'Not Early', 'Saccade to Cue', 1]]] },
+      { '1199': [['didSaccade', [1, 'Not Early', 'Saccade to Cue', 1]]] },
+      { '1201': [['didSaccade', [1, 'Not Early', 'Saccade to Cue', 1]]] },
+      { '1799': [['didSaccade', [1, 'Not Early', 'Saccade to Cue', 1]]] },
+      {
+        '1801': [
+          ['didNotSaccade', [1, 'Not Early', 'No Saccade', 0]],
+          ['didSaccade', [1, 'Not Early', 'No Saccade', 0]]
+        ]
+      },
+      {
+        '2199': [
+          ['didNotSaccade', [1, 'Not Early', 'No Saccade', 0]],
+          ['didSaccade', [1, 'Not Early', 'No Saccade', 0]]
+        ]
+      },
+      {
+        '2201': [
+          ['didNotSaccade', [1, 'Not Early', 'No Saccade', 0]],
+          ['didSaccade', [1, 'Not Early', 'No Saccade', 0]]
+        ]
+      },
+      {
+        '4199': [
+          ['didNotSaccade', [1, 'Not Early', 'No Saccade', 0]],
+          ['didSaccade', [1, 'Not Early', 'No Saccade', 0]]
+        ]
+      },
+      {
+        '4201': [
+          ['didNotSaccade', [1, 'Not Early', 'No Saccade', 0]],
+          ['didSaccade', [2, 'Early', 'Saccade Away', 0]]
+        ]
+      }
+    ]);
+  });
+  test(`The cue duration can be set by two early saccades before the cue appears and doesn't count as a look.`, () => {
+    jest.useFakeTimers();
+    const fn = jest.fn();
+    const context = new Context();
+    context.delegate = {
+      didCalibrationEnd: jest.fn()
+    };
+    context.getDelayInMilliseconds = () => 1000;
+    context.start();
+
+    // Trial #1 Make a saccade before the cue appears.
+    context.keyDown();
+    jest.runTimersToTime(1000 - 1);
+    context.keyUp();
+    jest.runTimersToTime(1 + context.state.cueDuration + 3000);
+
+    // Trial #2 Make a saccade before the cue appears.
+    context.keyDown();
+    jest.runTimersToTime(1000 - 1);
+    context.keyUp();
+    jest.runTimersToTime(1 + context.state.cueDuration + 3000);
+    expect(context.delegate.didCalibrationEnd).not.toBeCalled();
+  });
+  test('The cue duration can be set by two early saccades before the cue appears.', () => {
+    jest.useFakeTimers();
+    const fn = jest.fn();
+    const context = new Context();
+    context.delegate = wrapDelegateFunctions(fn, [
+      'didSaccade',
+      'didNotSaccade',
+      'didCalibrationEnd'
+    ]);
+    context.getDelayInMilliseconds = () => 1000;
+    context.start();
+
+    // Trial #1 Make a saccade before the cue appears.
+    context.keyDown();
+    jest.runTimersToTime(1000 - 1);
+    context.keyUp();
+    jest.runTimersToTime(1 + context.state.cueDuration + 3000);
+
+    // Trial #2 Make a saccade before the cue appears.
+    context.keyDown();
+    jest.runTimersToTime(1000 - 1);
+    context.keyUp();
+    jest.runTimersToTime(1 + context.state.cueDuration + 3000);
+
+    expect(
+      fn.mock.calls.map(([i, j]) => {
+        return [i, _.pick(j, ['cueDuration', 'isDistracting'])];
+      })
+    ).toEqual([
+      ['didSaccade', { cueDuration: 200, isDistracting: false }],
+      ['didSaccade', { cueDuration: 200, isDistracting: false }]
+    ]);
+  });
+});
 
 describe('18 Oct 2017', () => {
   test('There is a saccade before the cue appears.', () => {
@@ -26,7 +246,8 @@ describe('18 Oct 2017', () => {
     jest.runTimersToTime(1000 - 1);
     context.keyUp();
     jest.runTimersToTime(1 + context.state.cueDuration + 3000);
-    expect(context.delegate.didSaccade).not.toBeCalled();
+    // Reverted on 28 Oct 2017.
+    expect(context.delegate.didSaccade).toBeCalled();
   });
   test('There is a saccade after the cue appears.', () => {
     jest.useFakeTimers();
@@ -480,8 +701,8 @@ describe('New Scenarios', () => {
     jest.runTimersToTime(500);
     randomlyHitKeys();
     jest.runTimersToTime(500);
-    randomlyHitKeys();
-    jest.runTimersToTime(100);
+    randomlyHitKeys(); // Look #1
+    jest.runTimersToTime(100); // Cue visible here.
     randomlyHitKeys();
     jest.runTimersToTime(100);
     randomlyHitKeys();
@@ -672,7 +893,7 @@ describe('Procedure (2008)', () => {
       context.keyUp();
 
       // The event will only fire at the delay.
-      jest.runOnlyPendingTimers();
+      // jest.runOnlyPendingTimers();
 
       expect(delegate.didSaccade).toBeCalled();
       expect(delegate.didNotSaccade).not.toBeCalled();
@@ -830,6 +1051,7 @@ describe('Calibration (2008)', () => {
       };
       const context = new Context();
       context.delegate = delegate;
+      context.getDelayInMilliseconds = () => 1000;
       context.getDelayInMilliseconds = jest.fn();
       context.getDelayInMilliseconds.mockReturnValue(1000);
       context.start();
@@ -839,10 +1061,10 @@ describe('Calibration (2008)', () => {
       jest.runTimersToTime(1000 + context.state.cueDuration + 600 - 1);
       context.keyUp();
       jest.runTimersToTime(3000);
+      expect(context.state.lookNumber).toBe(1);
       expect(delegate.didSaccade).toBeCalled();
       expect(context.state.trialNumber).toBe(2);
       expect(context.state.cueDuration).toBe(200);
-      expect(context.state.lookNumber).toBe(1);
     });
   });
   describe('On the following trial, the computer presented the distractor at the same duration, and if the infant again looked to the distractor (and the experimenter released the key to indicate to the computer that the infant had looked to the distractor), the computer set the distractor presentation to this duration for the rest of the experiment.', () => {
@@ -863,7 +1085,7 @@ describe('Calibration (2008)', () => {
       context.keyUp();
       jest.runTimersToTime(3000);
       expect(context.state.cueDuration).toBe(200);
-      expect(context.state.lookNumber).toBe(1);
+      expect(context.state.lookNumber).toBe(0);
     });
     test('...and if the infant again looked to the distractor (and the experimenter released the key to indicate to the computer that the infant had looked to the distractor), the computer set the distractor presentation to this duration for the rest of the experiment.', () => {
       jest.useFakeTimers();
@@ -982,7 +1204,6 @@ describe('Calibration (2008)', () => {
       jest.runTimersToTime(2400);
       expect(context.state.cueDuration).toBe(1250);
       expect(context.state.isCalibrating).toBe(false);
-
       expect(delegate.didCalibrationEnd).toHaveBeenCalledTimes(1);
     });
   });

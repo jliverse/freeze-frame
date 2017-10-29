@@ -1,26 +1,34 @@
 {
   "name": "FreezeFrame",
-  "version": "0.9.1",
+  "version": "0.9.5",
   "author": "Joseph Liversedge <jliverse@vt.edu>",
   "contributors": [
     "Dr. M. A. Bell <mabell@vt.edu>",
     "L. Patton <lapatton@vt.edu>"
   ],
-  "description": "For researchers of infant cognition and human development, Freeze Frame is an interactive computer application that provides experimental control of visual cues, animation and stimuli for scientific trials of early visual inhibition.",
+  "description":
+    "For researchers of infant cognition and human development, Freeze Frame is an interactive computer application that provides experimental control of visual cues, animation and stimuli for scientific trials of early visual inhibition.",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --hot --inline --progress",
+    "start":
+      "cross-env NODE_ENV=development webpack-dev-server --hot --inline --progress",
     "start:app": "electron-webpack dev",
     "jest": "jest --no-cache --watch",
-    "build": "cross-env NODE_ENV=production webpack --progress --profile --colors",
+    "build":
+      "cross-env NODE_ENV=production webpack --progress --profile --colors",
     "build:app": "electron-webpack && electron-builder",
-    "build:package": "npm run build:app -- --dir -c.compression=store -c.mac.identity=null",
-    "build:browser": "cross-env NODE_ENV=production webpack --hide-modules --config webpack.browser.babel.js",
-    "build:start": "cross-env NODE_ENV=production webpack-dev-server --hot --inline --progress",
+    "build:package":
+      "npm run build:app -- --dir -c.compression=store -c.mac.identity=null",
+    "build:browser":
+      "cross-env NODE_ENV=production webpack --hide-modules --config webpack.browser.babel.js",
+    "build:start":
+      "cross-env NODE_ENV=production webpack-dev-server --hot --inline --progress",
     "test": "jest --no-cache --verbose",
-    "test:browser": "cross-env NODE_ENV=test webpack-dev-server --hot --inline --progress --config webpack.browser.babel.js",
+    "test:browser":
+      "cross-env NODE_ENV=test webpack-dev-server --hot --inline --progress --config webpack.browser.babel.js",
     "release": "npm run build",
-    "stats": "cross-env NODE_ENV=production webpack --json | webpack-bundle-size-analyzer",
+    "stats":
+      "cross-env NODE_ENV=production webpack --json | webpack-bundle-size-analyzer",
     "lint:css": "immutable-css public/*.css --strict",
     "lint:js": "eslint --quiet **/*.js",
     "prebuild": "npm test",
@@ -31,18 +39,15 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/jliverse/freeze-frame.git"
+    "url": "https://github.com/BookAndBranch/freeze-frame.git"
   },
   "bugs": {
-    "url": "https://github.com/jliverse/freeze-frame/issues"
+    "url": "https://github.com/BookAndBranch/freeze-frame/issues"
   },
-  "homepage": "https://github.com/jliverse/freeze-frame",
+  "homepage": "https://github.com/BookAndBranch/freeze-frame",
   "build": {
     "appId": "edu.vt.phys.freezeframe",
-    "files": [
-      "public/**/*",
-      "package.json"
-    ],
+    "files": ["public/**/*", "package.json"],
     "publish": null,
     "mac": {
       "target": "pkg"
@@ -52,9 +57,7 @@
     }
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.js"
-    ],
+    "collectCoverageFrom": ["src/**/*.js"],
     "testPathIgnorePatterns": [
       "<rootDir>/src/.*/__browser__",
       "<rootDir>/test"
@@ -81,9 +84,7 @@
       "sourceDirectory": "app/main"
     },
     "renderer": {
-      "dll": [
-        "preact"
-      ],
+      "dll": ["preact"],
       "sourceDirectory": "app/renderer"
     }
   },

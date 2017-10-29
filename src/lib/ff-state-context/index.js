@@ -191,14 +191,26 @@ export default class {
   _didSaccade() {
     const { didSaccade } = this.delegate;
     isFunction(didSaccade) &&
-      didSaccade({ ...this.getState(), isSaccadeAway: this.isSaccadeAway });
+      didSaccade({
+        ...this.getState(),
+        isSaccadeAway: this.isSaccadeAway,
+        isSaccadeEarly: this.isSaccadeEarly
+      });
   }
 
   _didSaccadeEarly() {
-    this.state.reward = false;
-    if (typeof this.isSaccadeAway !== 'undefined') {
-      this._didSaccade();
-    }
+    this.state.didMaintainFocus = false;
+    this.isSaccadeEarly = true;
+    this._didSaccade();
+  }
+
+  _didSaccadeBeforeExpiration() {
+    this.state.didMaintainFocus = false;
+    this._didSaccade();
+  }
+
+  _didSaccadeAfterExpiration() {
+    this._didSaccade();
   }
 
   _nextTrial = () => {
@@ -207,8 +219,10 @@ export default class {
     }
     clearInterval(this.animationTimer);
 
-    this.isSaccadeAway = undefined;
-    this.state.reward = true;
+    this.isSaccadeEarly = false;
+    this.isSaccadeAway = true;
+
+    this.state.didMaintainFocus = true;
     this.keyDelegate = ::this._didSaccadeEarly;
 
     // After 1-2s random delay, pause the animation and show the cue.
@@ -224,12 +238,22 @@ export default class {
 
       // Freeze animation and show cue.
       this.state.isAnimating = false;
-      this.state.isDistracting = true;
-      this.isSaccadeAway = false;
-      this.cueTime = window.performance.now();
-      isFunction(didCueChange) && didCueChange(this.getState());
       isFunction(didAnimationStop) && didAnimationStop(this.getState());
+
+      this.state.isDistracting = true;
+      isFunction(didCueChange) && didCueChange(this.getState());
+
+      this.cueTime = window.performance.now();
       isFunction(didStateChange) && didStateChange(this.getState());
+
+      this.isSaccadeAway = false;
+      const incrementLook = once(::this._incrementLook);
+      this.keyDelegate = () => {
+        if (!this.isSaccadeAway) {
+          incrementLook();
+        }
+        this._didSaccadeBeforeExpiration();
+      };
 
       // After 1000ms, don't report saccades as looks to cue.
       setTimeout(
@@ -248,13 +272,13 @@ export default class {
 
         // After 600ms, we know what kind of saccade the subject made.
         setTimeout(() => {
-          this.keyDelegate = ::this._didSaccade;
-          this.state.isAnimating = this.state.reward;
-          if (this.state.reward) {
-            isFunction(didNotSaccade) && didNotSaccade(this.getState());
-            this._incrementCueDuration();
-          } else {
-            this._incrementLook();
+          this.keyDelegate = ::this._didSaccadeAfterExpiration;
+          this.state.isAnimating = this.state.didMaintainFocus;
+          if (!this.isSaccadeEarly) {
+            if (this.state.didMaintainFocus) {
+              isFunction(didNotSaccade) && didNotSaccade(this.getState());
+              this._incrementCueDuration();
+            }
           }
           isFunction(didStateChange) && didStateChange(this.getState());
         }, this.getSaccadeThreshold());
