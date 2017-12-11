@@ -3,7 +3,7 @@ For researchers of infant cognition and human development, Freeze Frame is an in
 
 > Holmboe, K., Fearon, R. M. P., Csibra, G., Tucker, L. A., & Johnson, M. H. (2008). Freeze-Frame: A new infant inhibition task and its relation to frontal cortex tasks during infancy and early childhood. Journal of Experimental Child Psychology, 100, 89–114.
 
-:rocket: The [latest version](bookandbranch.github.io/freeze-frame/) of the Freeze Frame (2017) software is available as a hosted application.
+:rocket: The [latest version](https://bookandbranch.github.io/freeze-frame/) of the Freeze Frame (2017) software is available as a hosted application.
 
 # Development Guide
 - [Installation](#installation)
